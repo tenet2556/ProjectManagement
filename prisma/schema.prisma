@@ -1,45 +1,77 @@
-generator client {
-  provider = "prisma-client-js"
+ generator client {
+  provider = "prisma-client"
+  output   = "../src/generated"
+   engineType = "library"
 }
-
+ 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
-
-
-model User {
+ 
+enum ProjectStatus {
+  ACTIVE
+  COMPLETED
+  ARCHIVED
+}
+ 
+enum ProjectPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+ 
+enum Role {
+  ADMIN
+  TEAM_LEADER
+  MEMBER
+}
+ 
+model Employee {
   id        String   @id @default(uuid())
   name      String
   email     String   @unique
-  password  String
-  role      String   @default("MEMBER")
-  projects  Project[]
-  tasks     Task[]
+  role      Role
+  user      User?    @relation("EmployeeUser")
   createdAt DateTime @default(now())
 }
-
+ 
+model User {
+  id         String    @id @default(uuid())
+  name       String
+  email      String    @unique
+  password   String
+  role       Role
+  projects   Project[] @relation("UserProjects")
+  tasks      Task[]    @relation("UserTasks")
+  employeeId String    @unique
+  employee   Employee  @relation("EmployeeUser", fields: [employeeId], references: [id])
+  createdAt  DateTime  @default(now())
+}
+ 
 model Project {
-  id          String   @id @default(uuid())
+  id          String          @id @default(uuid())
   name        String
   description String?
   ownerId     String
-  owner       User     @relation(fields: [ownerId], references: [id])
+  owner       User            @relation("UserProjects", fields: [ownerId], references: [id])
   tasks       Task[]
-  createdAt   DateTime @default(now())
+  status      ProjectStatus   @default(ACTIVE)
+  priority    ProjectPriority @default(MEDIUM)
+  startDate   DateTime?
+  dueDate     DateTime?
+  createdAt   DateTime        @default(now())
 }
-
+ 
 model Task {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   title       String
   description String?
-  status      String   @default("TODO")
-  priority    String   @default("MEDIUM")
+  status      String    @default("TODO")
+  priority    String    @default("MEDIUM")
   dueDate     DateTime?
   projectId   String
-  project     Project  @relation(fields: [projectId], references: [id])
+  project     Project   @relation(fields: [projectId], references: [id])
   assigneeId  String?
-  assignee    User?    @relation(fields: [assigneeId], references: [id])
-  createdAt   DateTime @default(now())
+  assignee    User?     @relation("UserTasks", fields: [assigneeId], references: [id])
+  createdAt   DateTime  @default(now())
 }
-
