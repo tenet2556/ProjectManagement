@@ -1,14 +1,19 @@
+// app/components/StatCard.tsx
+import React from 'react';
+
 interface StatCardProps {
   title: string;
-  value: number;
+  value: string | number;
   color: string;
 }
 
-export  default function StatCard({ title, value, color }: StatCardProps) {
+const StatCard: React.FC<StatCardProps> = ({ title, value, color }) => {
   return (
-    <div className={`p-6 rounded-xl text-white shadow-md ${color}`}>
-      <h2 className="text-lg">{title}</h2>
-      <p className="text-3xl font-bold mt-2">{value}</p>
+    <div className={`flex h-full min-h-[88px] flex-col justify-between rounded-lg p-4 shadow-md text-white ${color}`}>
+      <h3 className="text-lg font-semibold">{title}</h3>
+      <p className="text-3xl font-bold">{value}</p>
     </div>
   );
-}
+};
+
+export default StatCard;
