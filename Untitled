@@ -1,0 +1,2 @@
+DATABASE_URL=postgresql://postgres:root@localhost:5432/team12
+JWT_SECRET=my_super_secret_key_12345
