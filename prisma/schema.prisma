@@ -21,6 +21,7 @@ enum ProjectPriority {
 
 enum Role {
   ADMIN
+  PROJECT_MANAGER
   TEAM_LEADER
   MEMBER
 }

@@ -5,57 +5,57 @@ import jwt from "jsonwebtoken";
 const JWT_SECRET = process.env.JWT_SECRET!;
 
 /**
- * REGISTER USER
+ * REGISTER USER - modified to include adminEmail for validation
  * - Must exist in Employee table
  * - Role must match
  */
 export async function registerUser(
   email: string,
   password: string,
-  role: string
+  role: string,
+  adminEmail: string
 ) {
-  // 1️⃣ Check employee exists
+  // check admin exists
+  const admin = await prisma.employee.findUnique({
+    where: { email: adminEmail }
+  });
+
+  if (!admin || admin.role !== "ADMIN") {
+    throw new Error("Only ADMIN can register users.");
+  }
+
+  // check employee exists
   const employee = await prisma.employee.findUnique({
-    where: { email },
+    where: { email }
   });
 
   if (!employee) {
-    throw new Error("You are not authorized to register.");
+    throw new Error("Employee not found.");
   }
 
-  // 2️⃣ Validate role match
+  // check role matches
   if (employee.role !== role) {
-    throw new Error("Role mismatch. Registration denied.");
+    throw new Error("Role mismatch.");
   }
 
-  // 3️⃣ Check if already registered
   const existingUser = await prisma.user.findUnique({
-    where: { email },
+    where: { email }
   });
 
   if (existingUser) {
     throw new Error("User already registered.");
   }
 
-  // 4️⃣ Hash password
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  // 5️⃣ Create user in User table
   const user = await prisma.user.create({
     data: {
       name: employee.name,
       email: employee.email,
       password: hashedPassword,
-      role: employee.role, // always from Employee
-      employeeId: employee.id,
-    },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      role: true,
-      createdAt: true,
-    },
+      role: employee.role,
+      employeeId: employee.id
+    }
   });
 
   return user;

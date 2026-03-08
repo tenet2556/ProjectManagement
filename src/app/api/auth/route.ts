@@ -5,19 +5,20 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    // REGISTER
+    // REGISTER - modified to include adminEmail for validation
     if (body.type === "register") {
-      const user = await registerUser(
-        body.email,
-        body.password,
-        body.role
-      );
+    const user = await registerUser(
+      body.email,
+      body.password,
+      body.role,
+      body.adminEmail
+    );
 
-      return NextResponse.json(
-        { message: "Registration successful", user },
-        { status: 201 }
-      );
-    }
+    return NextResponse.json({
+      message: "User registered by admin",
+      user
+    });
+  }
 
     // LOGIN
     if (body.type === "login") {
