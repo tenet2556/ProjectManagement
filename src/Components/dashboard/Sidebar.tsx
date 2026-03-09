@@ -20,11 +20,8 @@ const MANAGER_LINKS = [
 // TEAM LEADER SIDEBAR
 const TEAM_LEADER_LINKS = [
   { href: '/dashboard/teamleader', label: 'Dashboard' },
-  { href: '/dashboard/teamleader', label: 'My Teams' },
-  { href: '/dashboard/teamleader', label: 'My Projects' },
+  { href: '/projects', label: 'My Projects' },
   { href: '/tasks', label: 'Team Tasks' },
-  { href: '/team-members', label: 'Team Members' },
-  { href: '/reports', label: 'Reports' },
   { href: '/notifications', label: 'Notifications' },
   { href: '/settings', label: 'Settings' },
 ];
@@ -32,8 +29,8 @@ const TEAM_LEADER_LINKS = [
 // EMPLOYEE SIDEBAR
 const EMPLOYEE_LINKS = [
   { href: '/dashboard/employee', label: 'Dashboard' },
-  { href: '/dashboard/employee', label: 'My Tasks' },
-  { href: '/dashboard/employee', label: 'My Projects' },
+  { href: '/tasks', label: 'My Tasks' },
+  { href: '/projects', label: 'My Projects' },
   { href: '/notifications', label: 'Notifications' },
   { href: '/profile', label: 'Profile' },
   { href: '/settings', label: 'Settings' },

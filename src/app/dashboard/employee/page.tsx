@@ -70,61 +70,32 @@ export default async function EmployeeDashboardPage() {
 
   return (
     <>
-      <h2 className="mb-6 text-xl font-bold text-slate-800">Employee Dashboard</h2>
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-slate-900 leading-tight">Employee Dashboard</h2>
+        <p className="text-slate-500 mt-1">Quick overview of your performance and task status.</p>
+      </div>
 
       <section className="mb-8">
         <h3 className="sr-only">Statistics</h3>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <StatCard title="My Tasks" value={myTasks} color="blue" />
-          <StatCard title="Completed Tasks" value={completedTasks} color="green" />
-          <StatCard title="Pending Tasks" value={pendingTasks} color="yellow" />
-          <StatCard title="Overdue Tasks" value={overdueTasks} color="red" />
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <StatCard title="Total Tasks" value={myTasks} color="blue" />
+          <StatCard title="Completed" value={completedTasks} color="green" />
+          <StatCard title="Pending" value={pendingTasks} color="yellow" />
+          <StatCard title="Overdue" value={overdueTasks} color="red" />
         </div>
       </section>
 
-      <section className="mb-8">
-        <h3 className="mb-4 text-lg font-bold text-slate-800">My Task List</h3>
-        <ul className="space-y-2">
-          {assignedTasks.map((task) => (
-            <li key={task.id}>
-              <TaskRow
-                taskId={task.id}
-                taskName={task.title}
-                projectName={task.project.name}
-                deadline={task.dueDate ? task.dueDate.toISOString() : null}
-                status={task.status}
-              />
-            </li>
-          ))}
-        </ul>
-        {assignedTasks.length === 0 && (
-          <p className="rounded-xl border border-slate-200 bg-white p-6 text-center text-slate-500">
-            No tasks assigned to you.
-          </p>
-        )}
-      </section>
-
-      <section>
-        <h3 className="mb-4 text-lg font-bold text-slate-800">My Projects</h3>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {projectCards.map((p) => (
-            <ProjectCard
-              key={p.projectId}
-              projectId={p.projectId}
-              name={p.name}
-              status={p.status}
-              deadline={p.deadline}
-              teamLeader={p.teamLeader}
-              progress={p.progress}
-            />
-          ))}
+      <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-white/50 p-12 text-center">
+        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+          <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
         </div>
-        {projectCards.length === 0 && (
-          <p className="rounded-xl border border-slate-200 bg-white p-6 text-center text-slate-500">
-            No projects from your assigned tasks.
-          </p>
-        )}
-      </section>
+        <h3 className="text-lg font-semibold text-slate-900">Task Details Moved</h3>
+        <p className="mx-auto mt-2 max-w-sm text-slate-500">
+          Detailed task lists and project overviews have been moved to their dedicated management pages for a cleaner workflow.
+        </p>
+      </div>
     </>
   );
 }

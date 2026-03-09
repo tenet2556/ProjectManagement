@@ -59,41 +59,34 @@ export default async function ManagerDashboardPage() {
 
   return (
     <>
-      <h2 className="mb-6 text-xl font-bold text-slate-800">Project Manager Dashboard</h2>
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-slate-900 leading-tight">Project Manager Dashboard</h2>
+        <p className="text-slate-500 mt-1">High-level overview of project health and team resources.</p>
+      </div>
 
       <section className="mb-8">
         <h3 className="sr-only">Statistics</h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-          <StatCard title="Total Projects" value={projectCount} color="blue" />
-          <StatCard title="Active Projects" value={activeCount} color="green" />
-          <StatCard title="Completed Projects" value={completedCount} color="yellow" />
-          <StatCard title="Overdue Projects" value={overdueCount} color="red" />
-          <StatCard title="Total Teams" value={teamCount} color="purple" />
-          <StatCard title="Total Employees" value={employeeCount} color="indigo" />
+          <StatCard title="Projects" value={projectCount} color="blue" />
+          <StatCard title="Active" value={activeCount} color="green" />
+          <StatCard title="Completed" value={completedCount} color="yellow" />
+          <StatCard title="Overdue" value={overdueCount} color="red" />
+          <StatCard title="Teams" value={teamCount} color="purple" />
+          <StatCard title="Employees" value={employeeCount} color="indigo" />
         </div>
       </section>
 
-      <section>
-        <h3 className="mb-4 text-lg font-bold text-slate-800">Project Overview</h3>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {projectCards.map((p) => (
-            <ProjectCard
-              key={p.projectId}
-              projectId={p.projectId}
-              name={p.name}
-              status={p.status}
-              deadline={p.deadline}
-              teamLeader={p.teamLeader}
-              progress={p.progress}
-            />
-          ))}
+      <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-white/50 p-12 text-center">
+        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+          <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
         </div>
-        {projectCards.length === 0 && (
-          <p className="rounded-xl border border-slate-200 bg-white p-6 text-center text-slate-500">
-            No projects yet.
-          </p>
-        )}
-      </section>
+        <h3 className="text-lg font-semibold text-slate-900">Project Management Moved</h3>
+        <p className="mx-auto mt-2 max-w-sm text-slate-500">
+          Detailed project lists and management tools are now located on the dedicated Projects page for better focus.
+        </p>
+      </div>
     </>
   );
 }
