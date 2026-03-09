@@ -1,11 +1,23 @@
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
+  output     = "../src/generated"
+  engineType = "library"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id        String    @id @default(uuid())
+  name      String
+  email     String    @unique
+  password  String
+  createdAt DateTime  @default(now())
+  role      Role      @default(MEMBER)
+  projects  Project[] @relation("UserProjects")
+  tasks     Task[]    @relation("UserTasks")
+}
 
 model Project {
   id          String          @id @default(uuid())
@@ -51,27 +63,4 @@ enum Role {
   ADMIN
   TEAM_LEADER
   MEMBER
-}
-model Employee {
-  id    String @id @default(uuid())
-  name  String
-  email String @unique
-  role  Role
-
-  users User[]
-}
-
-model User {
-  id         String    @id @default(uuid())
-  name       String
-  email      String    @unique
-  password   String
-  createdAt  DateTime  @default(now())
-  role       Role      @default(MEMBER)
-
-  employeeId String?
-  employee   Employee? @relation(fields: [employeeId], references: [id])
-
-  projects  Project[] @relation("UserProjects")
-  tasks     Task[]    @relation("UserTasks")
 }

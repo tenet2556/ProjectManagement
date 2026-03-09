@@ -1,23 +1,37 @@
 // src/lib/prisma.ts
-import { PrismaClient } from '@prisma/client';
-import { Pool } from 'pg';
-import { PrismaPg } from '@prisma/adapter-pg';
+import "server-only";
+import { PrismaClient } from "@prisma/client";
 
-const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
+declare global {
+  // eslint-disable-next-line no-var
+  var __prisma: PrismaClient | undefined;
+}
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+/**
+ * Lazily returns a singleton PrismaClient.
+ * (Prisma v7 requires a driver adapter or accelerateUrl)
+ */
+export function getPrisma(): PrismaClient {
+  // Guard against Edge runtime
+  if (process.env.NEXT_RUNTIME === "edge") {
+    throw new Error(
+      'PrismaClient cannot run in Edge runtime. Ensure the calling route exports `export const runtime = "nodejs"`.'
+    );
+  }
 
-const adapter = new PrismaPg(pool);
+  if (!globalThis.__prisma) {
+    // ---- Pick ONE adapter block ----
 
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
-    adapter,
-    log: ['query', 'info', 'warn', 'error'],
-  });
+    // PostgreSQL:
+    const { PrismaPg } = require("@prisma/adapter-pg");
+    const adapter = new PrismaPg({
+      connectionString: process.env.DATABASE_URL!,
+    });
 
-if (process.env.NODE_ENV !== 'production') {
-  globalForPrisma.prisma = prisma;
+    globalThis.__prisma = new PrismaClient({
+      log: ["warn", "error"],
+      adapter, // <-- required in Prisma 7 if you don't use Accelerate
+    });
+  }
+  return globalThis.__prisma;
 }
