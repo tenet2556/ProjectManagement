@@ -23,7 +23,7 @@ export default function LoginPage() {
             </div>
 
             <h1 className="mt-12 text-4xl font-extrabold leading-tight">
-              Welcome Back 👋
+              Welcome Back 
             </h1>
 
             <p className="mt-5 text-white/80 text-lg leading-relaxed">
