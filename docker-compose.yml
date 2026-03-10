@@ -1,0 +1,58 @@
+version: "3.9"
+
+# ─────────────────────────────────────────────────────────────
+#  Docker Compose — Production (runs on Azure VM)
+#
+#  Usage:
+#    docker compose --env-file .env up -d
+#
+#  Prerequisites on the VM:
+#    - /mnt/data/pgdata directory must exist (on mounted Azure disk)
+#    - .env file must exist (copy from .env.production.example)
+# ─────────────────────────────────────────────────────────────
+
+services:
+
+  # ── PostgreSQL Database ───────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: pm_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: team12
+    volumes:
+      # Stored on the OS disk (sda) — persistent across VM restarts
+      # NOTE: /mnt on Azure is the ephemeral temp disk — do NOT use it for DB data
+      - /home/azureuser/pgdata:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # NOT exposing port 5432 to the host — only the app container reaches it
+
+  # ── Next.js Application ───────────────────────────────────
+  next-app:
+    image: shrinithi04/project-management-tool:latest
+    container_name: pm_nextapp
+    restart: unless-stopped
+    ports:
+      - "3000:3000"          # Expose app to the internet on port 3000
+    environment:
+      DATABASE_URL: postgresql://postgres:root@postgres:5432/team12?schema=public
+      JWT_SECRET: E_V6awIiYSA8O9ST8ktWMhEfEJ6iv58uYtXkKPfQY9j1V1KXeNn6_DLysVqSHnzdh4kbyc1qpHww9Nbejics-w==
+      NEXTAUTH_URL: http://4.188.84.115:3000
+      NODE_ENV: production
+    depends_on:
+      postgres:
+        condition: service_healthy   # Wait until postgres is ready
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

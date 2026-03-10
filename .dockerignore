@@ -1,0 +1,16 @@
+node_modules
+.next
+.git
+.gitignore
+
+# Environment files — NEVER bake secrets into the image
+.env
+.env.*
+!.env.production.example
+
+# Dev/test artifacts
+README.md
+*.md
+Jenkinsfile
+azure-vm-setup.sh
+docker-compose*.yml
