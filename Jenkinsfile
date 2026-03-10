@@ -71,31 +71,28 @@ pipeline {
                     // SSH into the VM and deploy
                     sshagent(credentials: ["azure-vm-ssh"]) {
                         sh """
-                            ssh -o StrictHostKeyChecking=no ${VM_USER}@${VM_HOST} '
+                            ssh -o StrictHostKeyChecking=no ${VM_USER}@${VM_HOST} << 'EOF'
                                 set -e
                                 echo "=== Pulling latest image ==="
-                                docker pull ${DOCKER_IMAGE}:latest
+                                docker pull shrinithi04/project-management-tool:latest
 
                                 echo "=== Fetching Secrets from Azure Key Vault ==="
                                 # Ensure Azure CLI uses the VM's System Assigned Managed Identity
                                 az login --identity --allow-no-subscriptions
                                 
-                                # Replace 'YOUR_KEY_VAULT_NAME' with the actual name of your Azure Key Vault
-                                export KV_NAME="group12-keyvault"
-                                
-                                export DATABASE_URL=\$(az keyvault secret show --name DATABASE-URL --vault-name \$KV_NAME --query value -o tsv)
-                                export JWT_SECRET=\$(az keyvault secret show --name JWT-SECRET --vault-name \$KV_NAME --query value -o tsv)
-                                export NEXTAUTH_URL=\$(az keyvault secret show --name NEXTAUTH-URL --vault-name \$KV_NAME --query value -o tsv)
+                                export DATABASE_URL=\$(az keyvault secret show --name DATABASE-URL --vault-name group12-keyvault --query value -o tsv)
+                                export JWT_SECRET=\$(az keyvault secret show --name JWT-SECRET --vault-name group12-keyvault --query value -o tsv)
+                                export NEXTAUTH_URL=\$(az keyvault secret show --name NEXTAUTH-URL --vault-name group12-keyvault --query value -o tsv)
 
                                 echo "=== Restarting app container ==="
-                                cd ${VM_APP_DIR}
+                                cd /home/azureuser/app
                                 docker compose up -d --no-deps next-app
 
                                 echo "=== Cleaning up old images ==="
                                 docker image prune -f
 
                                 echo "=== Deployment complete ==="
-                            '
+EOF
                         """
                     }
                 }
