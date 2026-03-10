@@ -38,31 +38,28 @@ pipeline {
             }
         }
 
-        // Stage 2 ─ Build Docker image & push to Docker Hub
         stage("Build & Push Image") {
             steps {
-                dir("ProjectManagement") {
-                    script {
-                        def imageTag = "${DOCKER_IMAGE}:${env.BUILD_NUMBER}"
-                        def latestTag = "${DOCKER_IMAGE}:latest"
+                script {
+                    def imageTag = "${DOCKER_IMAGE}:${env.BUILD_NUMBER}"
+                    def latestTag = "${DOCKER_IMAGE}:latest"
 
-                        echo "Building Docker image: ${imageTag}"
+                    echo "Building Docker image: ${imageTag}"
 
-                        // Build the image
-                        sh """
-                            docker build -t ${imageTag} -t ${latestTag} .
-                        """
+                    // Build the image
+                    sh """
+                        docker build -t ${imageTag} -t ${latestTag} .
+                    """
 
-                        // Login and push to Docker Hub
-                        sh """
-                            echo "${DOCKER_CREDENTIALS_PSW}" | docker login -u "${DOCKER_CREDENTIALS_USR}" --password-stdin
-                            docker push ${imageTag}
-                            docker push ${latestTag}
-                            docker logout
-                        """
+                    // Login and push to Docker Hub
+                    sh """
+                        echo "${DOCKER_CREDENTIALS_PSW}" | docker login -u "${DOCKER_CREDENTIALS_USR}" --password-stdin
+                        docker push ${imageTag}
+                        docker push ${latestTag}
+                        docker logout
+                    """
 
-                        echo "Pushed ${imageTag} and ${latestTag} to Docker Hub"
-                    }
+                    echo "Pushed ${imageTag} and ${latestTag} to Docker Hub"
                 }
             }
         }
