@@ -78,7 +78,7 @@ pipeline {
 
                                 echo "=== Fetching Secrets from Azure Key Vault ==="
                                 # Ensure Azure CLI uses the VM's System Assigned Managed Identity
-                                az login --identity
+                                az login --identity --allow-no-subscriptions
                                 
                                 # Replace 'YOUR_KEY_VAULT_NAME' with the actual name of your Azure Key Vault
                                 export KV_NAME="group12-keyvault"
