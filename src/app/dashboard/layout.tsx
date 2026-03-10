@@ -1,25 +1,34 @@
-import { redirect } from 'next/navigation';
-import { getCurrentUser, getDashboardPathForRole } from '@/lib/auth';
-import Sidebar from '@/Components/dashboard/Sidebar';
-import Topbar from '@/Components/dashboard/Topbar';
+"use client";
 
-export default async function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const user = await getCurrentUser();
-  if (!user) {
-    redirect('/login');
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import Sidebar from "@/components/Sidebar";
+
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push("/login");
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    );
   }
 
+  if (!user) return null;
+
   return (
-    <div className="flex min-h-screen bg-slate-100 text-slate-800">
-      <Sidebar role={user.role} />
-      <div className="ml-64 flex-1 min-h-screen">
-        <Topbar user={user} />
-        <main className="p-6 pt-20">{children}</main>
-      </div>
+    <div className="flex min-h-screen bg-gray-50">
+      <Sidebar />
+      <main className="flex-1 p-8">{children}</main>
     </div>
   );
 }
