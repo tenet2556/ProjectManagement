@@ -76,9 +76,20 @@ pipeline {
                                 echo "=== Pulling latest image ==="
                                 docker pull ${DOCKER_IMAGE}:latest
 
+                                echo "=== Fetching Secrets from Azure Key Vault ==="
+                                # Ensure Azure CLI uses the VM's System Assigned Managed Identity
+                                az login --identity
+                                
+                                # Replace 'YOUR_KEY_VAULT_NAME' with the actual name of your Azure Key Vault
+                                export KV_NAME="group12-keyvault"
+                                
+                                export DATABASE_URL=\$(az keyvault secret show --name DATABASE-URL --vault-name \$KV_NAME --query value -o tsv)
+                                export JWT_SECRET=\$(az keyvault secret show --name JWT-SECRET --vault-name \$KV_NAME --query value -o tsv)
+                                export NEXTAUTH_URL=\$(az keyvault secret show --name NEXTAUTH-URL --vault-name \$KV_NAME --query value -o tsv)
+
                                 echo "=== Restarting app container ==="
                                 cd ${VM_APP_DIR}
-                                docker compose --env-file .env up -d --no-deps next-app
+                                docker compose up -d --no-deps next-app
 
                                 echo "=== Cleaning up old images ==="
                                 docker image prune -f

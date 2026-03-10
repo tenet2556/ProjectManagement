@@ -43,10 +43,10 @@ services:
     ports:
       - "3000:3000"          # Expose app to the internet on port 3000
     environment:
-      DATABASE_URL: postgresql://postgres:root@postgres:5432/team12?schema=public
-      JWT_SECRET: E_V6awIiYSA8O9ST8ktWMhEfEJ6iv58uYtXkKPfQY9j1V1KXeNn6_DLysVqSHnzdh4kbyc1qpHww9Nbejics-w==
-      NEXTAUTH_URL: http://4.188.84.115:3000
-      NODE_ENV: production
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - NODE_ENV=production
     depends_on:
       postgres:
         condition: service_healthy   # Wait until postgres is ready
