@@ -66,4 +66,4 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
 # Run database migrations then start the server
-CMD ["sh", "-c", "node node_modules/prisma/build/index.js migrate deploy && node server.js"]
+CMD ["sh", "-c", "node node_modules/prisma/build/index.js db push --accept-data-loss && node server.js"]
