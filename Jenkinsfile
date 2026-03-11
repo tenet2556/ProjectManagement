@@ -1,7 +1,7 @@
 pipeline {
     agent any
 
-     Environment 
+    // Environment 
     environment {
         // Docker Hub image — shrinithi04's repository
         DOCKER_IMAGE      = "shrinithi04/project-management-tool"
