@@ -1,7 +1,7 @@
 pipeline {
     agent any
 
-    // ── Environment ──────────────────────────────────────────────
+     Environment 
     environment {
         // Docker Hub image — shrinithi04's repository
         DOCKER_IMAGE      = "shrinithi04/project-management-tool"
@@ -16,7 +16,7 @@ pipeline {
         VM_APP_DIR        = "/home/azureuser/app"
     }
 
-    // ── Triggers ─────────────────────────────────────────────────
+    // Triggers 
     triggers {
         // Automatically trigger on GitHub push via webhook
         githubPush()
@@ -28,7 +28,7 @@ pipeline {
         timestamps()
     }
 
-    // ── Stages ───────────────────────────────────────────────────
+    //Stages 
     stages {
 
         // Stage 1 ─ Checkout source code
@@ -73,22 +73,22 @@ pipeline {
                         sh """
                             ssh -o StrictHostKeyChecking=no ${VM_USER}@${VM_HOST} << 'EOF'
                                 set -e
-                                echo "=== Pulling latest image ==="
+                                echo " Pulling latest image"
                                 docker pull shrinithi04/project-management-tool:latest
 
-                                echo "=== Fetching Secrets from Azure Key Vault ==="
-                                # Ensure Azure CLI uses the VM's System Assigned Managed Identity
+                                echo "Fetching Secrets from Azure Key Vault "
+                                
                                 az login --identity --allow-no-subscriptions
                                 
                                 export DATABASE_URL=\$(az keyvault secret show --name DATABASE-URL --vault-name group12-keyvault --query value -o tsv)
                                 export JWT_SECRET=\$(az keyvault secret show --name JWT-SECRET --vault-name group12-keyvault --query value -o tsv)
                                 export NEXTAUTH_URL=\$(az keyvault secret show --name NEXTAUTH-URL --vault-name group12-keyvault --query value -o tsv)
 
-                                echo "=== Restarting app container ==="
+                                echo " Restarting app container"
                                 cd /home/azureuser/app
                                 docker compose up -d --no-deps next-app
 
-                                echo "=== Cleaning up old images ==="
+                                echo "=== Cleaning up old images"
                                 docker image prune -f
 
                                 echo "=== Deployment complete ==="
@@ -100,16 +100,16 @@ EOF
         }
     }
 
-    // ── Post-build actions ───────────────────────────────────────
+    // Post-build actions 
     post {
         success {
-            echo "✅ Deployment of build #${env.BUILD_NUMBER} succeeded."
+            echo " Deployment of build #${env.BUILD_NUMBER} succeeded."
         }
         failure {
-            echo "❌ Pipeline failed at stage: ${env.STAGE_NAME}. Check logs above."
+            echo " Pipeline failed at stage: ${env.STAGE_NAME}. Check logs above."
         }
         always {
-            // Clean up local images to save Jenkins disk space
+            
             sh "docker rmi ${DOCKER_IMAGE}:${env.BUILD_NUMBER} || true"
         }
     }
